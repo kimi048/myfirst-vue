@@ -18,7 +18,9 @@
     <button type="button" @click="deletetoApi(deleteid)">送信</button>
   </div>
   <div v-for="user2 in users2" v-bind:key="user2.name">
-    {{user2._id}}
+    {{user2._id}}:{{user2.name}}:{{user2.screen_name}}<br>
+    {{user2.bio}}
+    <button type="button" @click="deletetoApi(user2._id)">消去</button>
   </div>
 </template>
 
@@ -76,6 +78,8 @@ export default {
         this.name="";
         this.screen_name="";
         this.bio="";
+        this.$router.go({path: this.$router.currentRoute.path, force: true});
+        // this.router.replace("/");
       })
       .catch((err) => {
         console.log(err);
@@ -87,6 +91,8 @@ export default {
       .then(response => {
         console.log(response);
         this.deleteid="";
+        this.$router.go({path: this.$router.currentRoute.path, force: true});
+        // this.router.replace("/");
       })
       .catch(error => console.log(error))
     }
