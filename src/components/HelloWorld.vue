@@ -1,58 +1,86 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
+  <!-- <img alt="Vue logo" src="./assets/logo.png">
+  <HelloWorld msg="Welcome to Your Vue.js App2"/> -->
+  <div>
     <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
+      {{msg}}
     </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <input type="text" v-model="msg"><br>
+    <p>name</p>
+    <input type="text" v-model="name"><br>
+    <p>screen_name</p>
+    <input type="text" v-model="screen_name"><br>
+    <p>bio</p>
+    <input type="text" v-model="bio"><br>
+    <button type="button" @click="sendtoApi()">送信</button>
   </div>
 </template>
 
 <script>
+//import HelloWorld from './components/HelloWorld.vue'
+import axios from "axios";
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  name: 'App',
+  components: {
+    //HelloWorld
+  },
+  data () {
+    return {
+      msg: 'Hello World!',
+      users:"",
+      name:"",
+      screen_name:"",
+      bio:""
+    }
+  },created() {
+    console.log("hogehoge");
+    axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
+    axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+    axios.get('http://localhost:3000/api/v1/user/')
+          .then(function(response) {
+             
+             console.log(response.data);
+          })
+           .catch(function(error){
+            console.log(error)
+          })
+          
+  },mounted: function(){
+    axios.get('https://api.coindesk.com/v1/bpi/currentprice.json')
+    .then(function(response){
+        //デバッグ用にconsoleに出力
+        console.log(response.data.bpi)
+        this.bpi = response.data.bpi
+    }.bind(this))
+    .catch(function(error){
+        console.log(error)
+    })
+  },
+  methods:{
+    sendtoApi:function(){
+      axios.post('http://localhost:3000/api/v1/user/',{
+        name:this.name,
+        screen_name:this.screen_name,
+        bio:this.bio
+      }).then((res) => {
+        console.log(res);
+        this.posts = res.data.posts;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
 }
 </style>
